@@ -5,6 +5,7 @@ import com.udacity.jdnd.course3.critter.model.dto.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.model.dto.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.model.entity.Customer;
 import com.udacity.jdnd.course3.critter.model.entity.Employee;
+import com.udacity.jdnd.course3.critter.service.CusService;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
 import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import com.udacity.jdnd.course3.critter.utility.DtoUtility;
@@ -33,6 +34,9 @@ public class UserController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    CusService cusService;
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         Customer customer = new Customer();
@@ -47,7 +51,8 @@ public class UserController {
     public List<CustomerDTO> getAllCustomers(){
         List<CustomerDTO> customerDTOs = new ArrayList<>();
 
-        List<Customer> customers = customerService.findAll();
+//        List<Customer> customers = customerService.findAll();
+        List<Customer> customers = cusService.findAll();
         for(Customer customer : customers){
             customerDTOs.add(DtoUtility.convertCustomerToCustomerDTO(customer));
         }
