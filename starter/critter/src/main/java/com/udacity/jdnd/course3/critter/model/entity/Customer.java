@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 //@NamedQuery(name = "Customer.findAll", query = "select c from Customer c")
@@ -37,6 +38,9 @@ public class Customer implements Serializable {
     private List<Pet> pets;
 
     public void insertPet(Pet pet){
+        if(pets == null){
+            pets = new ArrayList<>();
+        }
         pets.add(pet);
     }
 

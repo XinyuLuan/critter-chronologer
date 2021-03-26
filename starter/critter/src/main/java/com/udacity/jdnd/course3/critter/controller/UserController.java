@@ -5,8 +5,10 @@ import com.udacity.jdnd.course3.critter.model.dto.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.model.dto.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.model.entity.Customer;
 import com.udacity.jdnd.course3.critter.model.entity.Employee;
+import com.udacity.jdnd.course3.critter.repository.EmpRepository;
 import com.udacity.jdnd.course3.critter.service.CusService;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
+import com.udacity.jdnd.course3.critter.service.EmpService;
 import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import com.udacity.jdnd.course3.critter.utility.DtoUtility;
 import org.checkerframework.checker.units.qual.A;
@@ -37,6 +39,9 @@ public class UserController {
     @Autowired
     CusService cusService;
 
+    @Autowired
+    EmpService empService;
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         Customer customer = new Customer();
@@ -62,23 +67,27 @@ public class UserController {
 
     @GetMapping("/customer/{customerId}")
     public CustomerDTO getOneCustomer(@PathVariable long customerId){
-        return DtoUtility.convertCustomerToCustomerDTO(customerService.getCustomerById(customerId));
+//        return DtoUtility.convertCustomerToCustomerDTO(customerService.getCustomerById(customerId));
+        return DtoUtility.convertCustomerToCustomerDTO(cusService.findOneById(customerId));
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        return DtoUtility.convertCustomerToCustomerDTO(customerService.getOwnerByPet(petId));
+//        return DtoUtility.convertCustomerToCustomerDTO(customerService.getOwnerByPet(petId));
+        return DtoUtility.convertCustomerToCustomerDTO(cusService.findOwnerByPet(petId));
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         Employee employee = DtoUtility.convertToEmployee(employeeDTO);
-        return DtoUtility.convertToEmployeeDTO(employeeService.save(employee));
+//        return DtoUtility.convertToEmployeeDTO(employeeService.save(employee));
+        return DtoUtility.convertToEmployeeDTO(empService.saveEmployee(employee));
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Employee employee = employeeService.findEmpleyee(employeeId);
+        return DtoUtility.convertToEmployeeDTO(employee);
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -88,7 +97,21 @@ public class UserController {
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        List<Employee> employees = employeeService.findEmployeeForService(employeeDTO);
+//        List<Employee> employees = employeeService.findEmployeeForService(employeeDTO);
+        List<Employee> employees = empService.findEmployeeForService(employeeDTO);
+
+        List<EmployeeDTO> employeeDTOs = new ArrayList<>();
+        for(Employee employee: employees){
+            employeeDTOs.add(DtoUtility.convertToEmployeeDTO(employee));
+        }
+
+        return employeeDTOs;
+    }
+
+
+    @GetMapping("/employee/ids")
+    public List<EmployeeDTO> getEmployeesByIds(@RequestBody List<Long> ids){
+        List<Employee> employees = empService.findAllEmployeeByIds(ids);
 
         List<EmployeeDTO> employeeDTOs = new ArrayList<>();
         for(Employee employee: employees){
